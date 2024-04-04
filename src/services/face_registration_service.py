@@ -1,4 +1,3 @@
-from flask import Flask, request, jsonify
 import cv2
 import numpy as np
 from tensorflow.keras.applications.vgg16 import preprocess_input
@@ -7,6 +6,7 @@ from scipy.spatial.distance import cosine
 import pymongo
 from datetime import datetime
 from bson import ObjectId
+import os
 
 # MongoDB connection
 client = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
@@ -40,11 +40,12 @@ def extract_faces_from_frame(frame):
     return faces
 
 def register_face(video_file, student_id):
-    video_file_path = 'temp/temp_video.mp4'  # Define the path where you want to save the file
+    video_file_path = 'temp/temp_video.mp4'
+    os.makedirs(os.path.dirname(video_file_path), exist_ok=True)
     video_file.save(video_file_path)
     cap = cv2.VideoCapture(video_file_path)
-    registered_faces = []  # Initialize with empty list for each video
-    threshold = 0.6  # Example threshold
+    registered_faces = []
+    threshold = 0.6
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -67,8 +68,6 @@ def register_face(video_file, student_id):
 
             # Register new face
             registered_faces.append({'faceId': features.tolist(), 'studentId': student_id, 'created_on': datetime.now(), 'deleted_on': None})
-            # Optionally, save the registered face to your dataset
-            # Optionally, update your facial recognition model
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -76,6 +75,7 @@ def register_face(video_file, student_id):
     cap.release()
     cv2.destroyAllWindows()
 
-    # Save registered faces to MongoDB
     if registered_faces:
         collection.insert_many(registered_faces)
+    
+    os.remove(video_file_path)

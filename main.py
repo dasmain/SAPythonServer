@@ -1,5 +1,5 @@
 from flask import Flask
-from controllers.face_registration_controller import register_faces
+from src.controllers.face_registration_controller import register_faces
 
 app = Flask(__name__)
 
