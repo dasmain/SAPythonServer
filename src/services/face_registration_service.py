@@ -5,8 +5,8 @@ import numpy as np
 from mtcnn import MTCNN
 from datetime import datetime
 from scipy.spatial.distance import cosine
-from tensorflow.keras.applications.mobilenet import preprocess_input
-from tensorflow.keras.applications.mobilenet import MobileNet
+from tensorflow.keras.applications.mobilenet import preprocess_input # type: ignore
+from tensorflow.keras.applications.mobilenet import MobileNet # type: ignore
 
 # MongoDB connection
 client = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
