@@ -73,9 +73,12 @@ def detect_and_recognize_faces(image):
         # Extract the face region from the image
         face = image[y:y+h, x:x+w]
         # Perform face recognition for the extracted face
-        recognized_faces = recognize_face(face)
+        recognized_face_ids = recognize_face(face)
+        # Extend recognized_faces list with recognized_face_ids
+        recognized_faces.extend(recognized_face_ids)
     
-    return recognized_faces
+    return recognized_faces, len(faces)
+
 
 
 def recognition_service(image_file):
@@ -83,8 +86,8 @@ def recognition_service(image_file):
     os.makedirs(os.path.dirname(image_file_path), exist_ok=True)
     image_file.save(image_file_path)
     image = cv2.imread(image_file_path)
-    recognized_faces = detect_and_recognize_faces(image)  # Detect and recognize faces in the image
+    recognized_faces, headcount = detect_and_recognize_faces(image)  # Detect and recognize faces in the image
     print(recognized_faces)
 
     os.remove(image_file_path)
-    return recognized_faces
+    return recognized_faces, headcount

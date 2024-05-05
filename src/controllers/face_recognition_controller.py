@@ -13,5 +13,10 @@ def recognize_faces():
         return jsonify({'success': False, 'data': {}, 'message': 'No faceId provided in form data'}), 400
     
     data = recognition_service(uploaded_file)
+    
+    formatted_data = {
+    'recognized_student_ids': data[0],
+    'no_of_students_in_image': data[1]
+    }
 
-    return jsonify({'success': True, 'data': data, 'message': 'Face recognition completed'}), 200
+    return jsonify({'success': True, 'data': formatted_data, 'message': 'Face recognition completed'}), 200
