@@ -8,14 +8,15 @@ def recognize_faces():
         return jsonify({'success': False, 'data': {}, 'message': 'No image file provided'}), 400
 
     uploaded_file = request.files['faceId']
+    course_id = request.form.get('courseId')
 
     if not uploaded_file:
         return jsonify({'success': False, 'data': {}, 'message': 'No faceId provided in form data'}), 400
     
-    data = recognition_service(uploaded_file)
+    data = recognition_service(uploaded_file, course_id)
     
     formatted_data = {
-    'recognized_student_ids': data[0],
+    'attendance_records': data[0],
     'no_of_students_in_image': data[1]
     }
 
