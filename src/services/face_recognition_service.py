@@ -32,36 +32,49 @@ def extract_embeddings(image):
     embeddings = model.predict(np.expand_dims(preprocessed_image, axis=0))
     return embeddings.flatten()
 
-def recognize_face(image):
+def recognize_face(image, recognized):
     image_embeddings = extract_embeddings(image)
     
     recognized_ids = []
-    threshold = 0.6
+    min_similarity_object = []
+    threshold = 0.61
+    min_score = None
+    min_student_id = None
 
-    # Iterate over each student's face IDs
     for student_id, student_face_ids in registered_embeddings.items():
-        # Calculate similarity scores between image embeddings and each student's face IDs
+        if student_id in recognized:
+            continue
+
         student_similarity_scores = [cosine(face_id, image_embeddings) for face_id in student_face_ids]
         print("Student Similarity Scores:" + str(student_id) + ": " + str(student_similarity_scores))
         min_similarity_score = min(student_similarity_scores)
 
         if min_similarity_score < threshold:
-            print(student_id + ": " + str(min_similarity_score))
-            recognized_ids.append(student_id)
+            min_similarity_object.append({"student_id": student_id, "min_similarity_score": min_similarity_score})
     
+    if min_similarity_object:
+        min_score = min_similarity_object[0]['min_similarity_score']
+        min_student_id = min_similarity_object[0]['student_id']
+
+    for item in min_similarity_object:
+        if item['min_similarity_score'] < min_score:
+            min_score = item['min_similarity_score']
+            min_student_id = item['student_id']
+    
+    print("Added:" + str(min_student_id))
+    recognized_ids.append(min_student_id)
     return recognized_ids
 
 def detect_and_recognize_faces(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=7, minSize=(30, 30))
     
     recognized_faces = []
 
-    # Process each detected face separately
     for (x, y, w, h) in faces:
         face = image[y:y+h, x:x+w]
-        recognized_face_ids = recognize_face(face)
+        recognized_face_ids = recognize_face(face, recognized_faces)
         recognized_faces.extend(recognized_face_ids)
     
     return recognized_faces, len(faces)
