@@ -6,6 +6,7 @@ from datetime import datetime
 from scipy.spatial.distance import cosine
 from tensorflow.keras.applications.mobilenet import preprocess_input # type: ignore
 from tensorflow.keras.applications.mobilenet import MobileNet # type: ignore
+#from tensorflow.keras.applications.mobilenet_v2 import preprocess_input, MobileNetV2 # type: ignore
 
 # MongoDB connection
 client = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
@@ -14,6 +15,7 @@ collection = db["face_id"]
 
 # Load pre-trained MobileNet model
 mobilenet_model = MobileNet(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
+#mobilenet_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
 
 # Load Haar Cascade for face detection
 haar_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
