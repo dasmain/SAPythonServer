@@ -2,14 +2,21 @@ import os
 import cv2
 import pymongo
 import numpy as np
+from dotenv import load_dotenv
 from datetime import datetime
 from scipy.spatial.distance import cosine
 from tensorflow.keras.applications.mobilenet import preprocess_input # type: ignore
 from tensorflow.keras.applications.mobilenet import MobileNet # type: ignore
 #from tensorflow.keras.applications.mobilenet_v2 import preprocess_input, MobileNetV2 # type: ignore
 
+load_dotenv()
+
 # MongoDB connection
-client = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
+mongo_uri = os.getenv("MONGO_URI")
+if not mongo_uri:
+    raise ValueError("No MONGO_URI found in environment variables")
+
+client = pymongo.MongoClient(mongo_uri)
 db = client["sadb"]
 collection = db["face_id"]
 

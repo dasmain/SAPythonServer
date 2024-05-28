@@ -1,8 +1,16 @@
 import pymongo
 from bson import ObjectId
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # MongoDB connection
-client = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
+mongo_uri = os.getenv("MONGO_URI")
+if not mongo_uri:
+    raise ValueError("No MONGO_URI found in environment variables")
+
+client = pymongo.MongoClient(mongo_uri)
 db = client["sadb"]
 collection = db["course"]
 

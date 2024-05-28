@@ -2,6 +2,7 @@ import os
 import cv2
 import numpy as np
 import pymongo
+from dotenv import load_dotenv
 from scipy.spatial.distance import cosine
 from src.dao.get_faceId import get_all_faceIds
 from src.dao.get_enrolled_students import get_all_students
@@ -11,8 +12,15 @@ from tensorflow.keras.applications.mobilenet import preprocess_input # type: ign
 from tensorflow.keras.applications.mobilenet import MobileNet # type: ignore
 #from tensorflow.keras.applications.mobilenet_v2 import preprocess_input, MobileNetV2 # type: ignore
 
+
+load_dotenv()
+
 # MongoDB connection
-client = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
+mongo_uri = os.getenv("MONGO_URI")
+if not mongo_uri:
+    raise ValueError("No MONGO_URI found in environment variables")
+
+client = pymongo.MongoClient(mongo_uri)
 db = client["sadb"]
 collection = db["face_id"]
 
