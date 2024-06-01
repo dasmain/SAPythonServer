@@ -176,7 +176,7 @@ def recognize_face(image, recognized):
     
     recognized_ids = []
     min_similarity_object = []
-    threshold = 0.61
+    threshold = 0.5
     min_score = None
     min_student_id = None
 
@@ -201,20 +201,6 @@ def recognize_face(image, recognized):
     recognized_ids.append(min_student_id)
     return recognized_ids
 
-def detect_and_recognize_faces(image):
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=7, minSize=(30, 30))
-    
-    recognized_faces = []
-
-    for (x, y, w, h) in faces:
-        face = image[y:y+h, x:x+w]
-        recognized_face_ids = recognize_face(face, recognized_faces)
-        recognized_faces.extend(recognized_face_ids)
-    
-    return recognized_faces, len(faces)
-
 # def detect_and_recognize_faces(image):
 #     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 #     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
@@ -222,17 +208,31 @@ def detect_and_recognize_faces(image):
     
 #     recognized_faces = []
 
-#     for idx, (x, y, w, h) in enumerate(faces):
+#     for (x, y, w, h) in faces:
 #         face = image[y:y+h, x:x+w]
 #         recognized_face_ids = recognize_face(face, recognized_faces)
 #         recognized_faces.extend(recognized_face_ids)
-#         cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
-#         cv2.putText(image, str(idx+1), (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36,255,12), 2)
     
-#     cv2.imshow("Result", image)
-#     cv2.waitKey(0)
-#     cv2.destroyAllWindows()
 #     return recognized_faces, len(faces)
+
+def detect_and_recognize_faces(image):
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=7, minSize=(30, 30))
+    
+    recognized_faces = []
+
+    for idx, (x, y, w, h) in enumerate(faces):
+        face = image[y:y+h, x:x+w]
+        recognized_face_ids = recognize_face(face, recognized_faces)
+        recognized_faces.extend(recognized_face_ids)
+        cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
+        cv2.putText(image, str(idx+1), (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36,255,12), 2)
+    
+    cv2.imshow("Result", image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    return recognized_faces, len(faces)
 
 def recognition_service(image_file, course_id):
     image_file_path = 'temp/temp_image.jpg'
