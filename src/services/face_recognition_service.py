@@ -223,16 +223,11 @@ def detect_and_recognize_faces(image):
     
 #     recognized_faces = []
 
-#     for idx, (x, y, w, h) in enumerate(faces):
+#     for (x, y, w, h) in faces:
 #         face = image[y:y+h, x:x+w]
 #         recognized_face_ids = recognize_face(face, recognized_faces)
 #         recognized_faces.extend(recognized_face_ids)
-#         cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
-#         cv2.putText(image, str(idx+1), (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36,255,12), 2)
     
-#     cv2.imshow("Result", image)
-#     cv2.waitKey(0)
-#     cv2.destroyAllWindows()
 #     return recognized_faces, len(faces)
 
 def detect_and_recognize_faces(image):
