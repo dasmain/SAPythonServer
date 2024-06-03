@@ -177,7 +177,7 @@ def recognize_face(image, recognized):
     
     recognized_ids = []
     min_similarity_object = []
-    threshold = 0.48
+    threshold = 0.47
     min_score = None
     min_student_id = None
 
