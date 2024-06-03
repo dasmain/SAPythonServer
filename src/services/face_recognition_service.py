@@ -252,6 +252,7 @@ def recognition_service(image_file, course_id):
     image_file.save(image_file_path)
     image = cv2.imread(image_file_path)
     recognized_faces, headcount, new_image, recognized_amount = detect_and_recognize_faces(image)
+    unrecognized_amount = headcount - recognized_amount
     base64image = encode_image_to_base64(new_image)
     all_students = get_all_students(course_id)
     attendance_records = []
@@ -264,4 +265,4 @@ def recognition_service(image_file, course_id):
             attendance_records.append({"studentId": student_id, "status": "absent"})
 
     os.remove(image_file_path)
-    return attendance_records, headcount, niqab_count, base64image, recognized_amount
+    return attendance_records, headcount, niqab_count, base64image, recognized_amount, unrecognized_amount
