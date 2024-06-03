@@ -202,20 +202,6 @@ def recognize_face(image, recognized):
     recognized_ids.append(min_student_id)
     return recognized_ids
 
-def detect_and_recognize_faces(image):
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=7, minSize=(30, 30))
-    
-    recognized_faces = []
-
-    for (x, y, w, h) in faces:
-        face = image[y:y+h, x:x+w]
-        recognized_face_ids = recognize_face(face, recognized_faces)
-        recognized_faces.extend(recognized_face_ids)
-    
-    return recognized_faces, len(faces)
-
 # def detect_and_recognize_faces(image):
 #     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 #     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
