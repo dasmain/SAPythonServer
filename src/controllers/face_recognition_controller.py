@@ -20,8 +20,10 @@ def recognize_faces():
     
     formatted_data = {
     'attendance_records': data[0],
-    'no_of_students_in_image': data[1],
-    'no_of_niqaabi_students_in_image': data[2]
+    'detected_students_in_image': data[1],
+    'no_of_niqaabi_students_in_image': data[2],
+    'detected_image': data[3],
+    'recognized_students_in_image': data[4]
     }
 
     return jsonify({'success': True, 'data': formatted_data, 'message': 'Face recognition completed'}), 200
