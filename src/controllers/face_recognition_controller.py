@@ -24,7 +24,7 @@ def recognize_faces():
     'no_of_niqaabi_students_in_image': data[2],
     'detected_image': data[3],
     'recognized_students_in_image': data[4],
-    'unrecognized_students_in_image': data[5],
+    'unrecognized_students_in_image': data[5]
     }
 
     return jsonify({'success': True, 'data': formatted_data, 'message': 'Face recognition completed'}), 200
