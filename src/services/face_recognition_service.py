@@ -157,9 +157,6 @@ collection = db["face_id"]
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = InceptionResnetV1(pretrained='vggface2').eval().to(device)
 
-# Load the saved embeddings of registered faces
-registered_embeddings = get_all_faceIds()
-
 def preprocess_image(img):
     img = cv2.resize(img, (160, 160))
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -172,7 +169,7 @@ def extract_embeddings(image):
     embeddings = model(preprocessed_image)
     return embeddings.detach().cpu().numpy().flatten()
 
-def recognize_face(image, recognized):
+def recognize_face(image, recognized, registered_embeddings):
     image_embeddings = extract_embeddings(image)
     
     recognized_ids = []
@@ -216,7 +213,7 @@ def recognize_face(image, recognized):
     
 #     return recognized_faces, len(faces)
 
-def detect_and_recognize_faces(image):
+def detect_and_recognize_faces(image, filtered_embeddings):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=7, minSize=(30, 30))
@@ -226,7 +223,7 @@ def detect_and_recognize_faces(image):
 
     for idx, (x, y, w, h) in enumerate(faces):
         face = image[y:y+h, x:x+w]
-        recognized_face_ids = recognize_face(face, recognized_faces)
+        recognized_face_ids = recognize_face(face, recognized_faces, filtered_embeddings)
         recognized_faces.extend(recognized_face_ids)
         if recognized_face_ids == [None]:
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
@@ -246,15 +243,21 @@ def encode_image_to_base64(image):
     base64_image = base64.b64encode(buffer).decode('utf-8')
     return base64_image
 
+def filter_registered_embeddings(registered_embeddings, all_students):
+    filtered_embeddings = {student_id: embeddings for student_id, embeddings in registered_embeddings.items() if student_id in all_students}
+    return filtered_embeddings
+
 def recognition_service(image_file, course_id):
     image_file_path = 'temp/temp_image.jpg'
     os.makedirs(os.path.dirname(image_file_path), exist_ok=True)
     image_file.save(image_file_path)
     image = cv2.imread(image_file_path)
-    recognized_faces, headcount, new_image, recognized_amount = detect_and_recognize_faces(image)
+    registered_embeddings = get_all_faceIds()
+    all_students = get_all_students(course_id)
+    filtered_embeddings = filter_registered_embeddings(registered_embeddings, all_students)
+    recognized_faces, headcount, new_image, recognized_amount = detect_and_recognize_faces(image, filtered_embeddings)
     unrecognized_amount = headcount - recognized_amount
     base64image = encode_image_to_base64(new_image)
-    all_students = get_all_students(course_id)
     attendance_records = []
     niqab_count = niqab_detection(image_file_path)
 
