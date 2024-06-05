@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# MongoDB connection
 mongo_uri = os.getenv("MONGO_URI")
 if not mongo_uri:
     raise ValueError("No MONGO_URI found in environment variables")
@@ -22,10 +21,8 @@ def get_all_faceIds():
         student_id = doc["studentId"]
         face_ids = doc["faceId"]
 
-        # Flatten each face ID array
         flattened_ids = [np.array(inner_id).flatten() for inner_id in face_ids]
 
-        # Append the flattened IDs to the dictionary based on student ID
         if student_id in registered_embeddings:
             registered_embeddings[student_id].extend(flattened_ids)
         else:

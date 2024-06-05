@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# MongoDB connection
 mongo_uri = os.getenv("MONGO_URI")
 if not mongo_uri:
     raise ValueError("No MONGO_URI found in environment variables")

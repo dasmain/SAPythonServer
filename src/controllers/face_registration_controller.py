@@ -11,8 +11,6 @@ def register_faces():
     if not face_id or not student_id:
         return jsonify({'success': False, 'data': {}, 'message': 'Missing faceId or studentId in form data'}), 400
     
-    #get faceid by student_id to check if it alr exists or not
-
     register_face(face_id, student_id)
 
     return jsonify({'success': True, 'data': {}, 'message': 'Face registration completed'}), 200
