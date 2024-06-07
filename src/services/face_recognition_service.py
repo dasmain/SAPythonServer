@@ -70,57 +70,57 @@ def recognize_face(image, recognized, registered_embeddings):
 
 # HAAR'S CASCADE ALGORITHM
 
-# def detect_and_recognize_faces(image, filtered_embeddings):
-#     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-#     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-#     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=7, minSize=(30, 30))
-    
-#     recognized_faces = []
-#     recognized_amount = 0
-
-#     for idx, (x, y, w, h) in enumerate(faces):
-#         face = image[y:y+h, x:x+w]
-#         recognized_face_ids = recognize_face(face, recognized_faces, filtered_embeddings)
-#         recognized_faces.extend(recognized_face_ids)
-#         if recognized_face_ids == [None]:
-#             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
-#             cv2.putText(image, str(idx+1), (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36,255,12), 2)
-#         elif recognized_face_ids:
-#             recognized_amount += 1
-#             cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
-#             cv2.putText(image, str(idx+1), (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36,255,12), 2)
-    
-#     return recognized_faces, len(faces), image, recognized_amount
-
-# MTCNN ALGORITHM
-
 def detect_and_recognize_faces(image, filtered_embeddings):
-
-    rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    boxes, _ = mtcnn.detect(rgb_image)
-    
-    if boxes is None:
-        return [], 0, image, 0
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=7, minSize=(30, 30))
     
     recognized_faces = []
     recognized_amount = 0
 
-    for idx, box in enumerate(boxes):
-        x1, y1, x2, y2 = [int(coord) for coord in box]
-        face = image[y1:y2, x1:x2]
+    for idx, (x, y, w, h) in enumerate(faces):
+        face = image[y:y+h, x:x+w]
         recognized_face_ids = recognize_face(face, recognized_faces, filtered_embeddings)
         recognized_faces.extend(recognized_face_ids)
-        
         if recognized_face_ids == [None]:
-            cv2.rectangle(image, (x1, y1), (x2, y2), (0, 0, 255), 2)
-            cv2.putText(image, str(idx+1), (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36,255,12), 2)
+            cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
+            cv2.putText(image, str(idx+1), (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36,255,12), 2)
         elif recognized_face_ids:
             recognized_amount += 1
-            cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), 2)
-            cv2.putText(image, str(idx+1), (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36,255,12), 2)
+            cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
+            cv2.putText(image, str(idx+1), (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36,255,12), 2)
     
-    headcount = len(boxes)
-    return recognized_faces, headcount, image, recognized_amount
+    return recognized_faces, len(faces), image, recognized_amount
+
+# MTCNN ALGORITHM
+
+# def detect_and_recognize_faces(image, filtered_embeddings):
+
+#     rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+#     boxes, _ = mtcnn.detect(rgb_image)
+    
+#     if boxes is None:
+#         return [], 0, image, 0
+    
+#     recognized_faces = []
+#     recognized_amount = 0
+
+#     for idx, box in enumerate(boxes):
+#         x1, y1, x2, y2 = [int(coord) for coord in box]
+#         face = image[y1:y2, x1:x2]
+#         recognized_face_ids = recognize_face(face, recognized_faces, filtered_embeddings)
+#         recognized_faces.extend(recognized_face_ids)
+        
+#         if recognized_face_ids == [None]:
+#             cv2.rectangle(image, (x1, y1), (x2, y2), (0, 0, 255), 2)
+#             cv2.putText(image, str(idx+1), (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36,255,12), 2)
+#         elif recognized_face_ids:
+#             recognized_amount += 1
+#             cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), 2)
+#             cv2.putText(image, str(idx+1), (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36,255,12), 2)
+    
+#     headcount = len(boxes)
+#     return recognized_faces, headcount, image, recognized_amount
 
 def encode_image_to_base64(image):
     _, buffer = cv2.imencode('.jpg', image)
