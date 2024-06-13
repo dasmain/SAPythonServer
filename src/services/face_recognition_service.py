@@ -11,13 +11,13 @@ from facenet_pytorch import InceptionResnetV1, MTCNN
 import torch
 import base64
 
-load_dotenv()
+# load_dotenv()
 
-mongo_uri = os.getenv("MONGO_URI")
-if not mongo_uri:
-    raise ValueError("No MONGO_URI found in environment variables")
+# mongo_uri = os.getenv("MONGO_URI")
+# if not mongo_uri:
+#     raise ValueError("No MONGO_URI found in environment variables")
 
-client = pymongo.MongoClient(mongo_uri)
+client = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
 db = client["sadb"]
 collection = db["face_id"]
 

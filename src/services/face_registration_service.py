@@ -8,13 +8,13 @@ from scipy.spatial.distance import cosine
 from facenet_pytorch import InceptionResnetV1
 import torch
 
-load_dotenv()
+# load_dotenv()
 
-mongo_uri = os.getenv("MONGO_URI")
-if not mongo_uri:
-    raise ValueError("No MONGO_URI found in environment variables")
+# mongo_uri = os.getenv("MONGO_URI")
+# if not mongo_uri:
+#     raise ValueError("No MONGO_URI found in environment variables")
 
-client = pymongo.MongoClient(mongo_uri)
+client = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
 db = client["sadb"]
 collection = db["face_id"]
 
@@ -60,6 +60,7 @@ def register_face(video_file, student_id):
             
             if registered_faces:
                 similarity_scores = [cosine(reg_face['faceId'], features) for reg_face in registered_faces]
+                # jitne kam value, utna different, 1 se kareeb = accurate
                 min_score = min(similarity_scores, default=1.0)
                 if min_score < threshold:
                     reg_face_index = similarity_scores.index(min_score)
