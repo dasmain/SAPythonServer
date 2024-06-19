@@ -60,7 +60,6 @@ def register_face(video_file, student_id):
             
             if registered_faces:
                 similarity_scores = [cosine(reg_face['faceId'], features) for reg_face in registered_faces]
-                # jitne kam value, utna different, 1 se kareeb = accurate
                 min_score = min(similarity_scores, default=1.0)
                 if min_score < threshold:
                     reg_face_index = similarity_scores.index(min_score)
@@ -70,11 +69,7 @@ def register_face(video_file, student_id):
 
             registered_faces.append({'faceId': features.tolist(), 'studentId': student_id, 'created_on': datetime.now(), 'deleted_on': None})
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
     cap.release()
-    cv2.destroyAllWindows()
 
     if registered_faces:
         collection.update_one({'studentId': student_id}, {'$set': {'faceId': [face['faceId'] for face in registered_faces], 'created_on': datetime.now()}}, upsert=True)
